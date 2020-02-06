@@ -1,0 +1,27 @@
+{
+  "name": "employee-template-engine",
+  "version": "1.0.0",
+  "description": "employee template generator",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rachelrohrbach/employee-template-engine.git"
+  },
+  "keywords": [
+    "node",
+    "employee"
+  ],
+  "author": "Rachel Rohrbach",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rachelrohrbach/employee-template-engine/issues"
+  },
+  "homepage": "https://github.com/rachelrohrbach/employee-template-engine#readme"
+}
