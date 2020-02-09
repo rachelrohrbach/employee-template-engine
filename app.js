@@ -7,162 +7,236 @@ const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
 const util = require("util");
-const team = [];
 
-// const writeFileAsync = util.promisify(fs.writeFile);
-const init = () => {
-  promptUser();
-};
+const writeFileAsync = util.promisify(fs.writeFile);
 
-async function promptUser() {
-  try {
-    const newManager = await inquirer.prompt([
-      {
-        name: "name",
-        type: "input",
-        message: "Enter your manager's name:"
-      },
-      {
-        name: "id",
-        type: "input",
-        message: "Enter your manager's ID number:"
-      },
-      {
-        name: "email",
-        type: "input",
-        message: "Enter your manager's email address:"
-      },
-      {
-        name: "officeNumber",
-        type: "input",
-        message: "Enter your manager's office number:"
+
+async function getManager(ids) {
+  const manager = await inquirer.prompt([
+    {
+      name: "name",
+      type: "input",
+      message: "Enter your manager's name:",
+      validate: answer => {
+        if (isNaN(answer) && answer !== " ") {
+          return true;
+        } else {
+          throw Error("Please enter your manager's name.");
+        }
       }
-    ]);
-    console.log(newManager);
-    team.push(
-      new Manager(
-        manager.name,
-        manager.id,
-        manager.email,
-        manaager.officeNumber
-      )
-    );
-    generateCard(
-      new Manager(
-        manager.name,
-        manager.id,
-        manager.email,
-        manaager.officeNumber
-      )
-    );
-    generateHtml();
-    // console.log(team);
-  } catch (error) {
-    console.log("try again");
-  }
-  
-  addEmployee();
+    },
+    {
+      name: "id",
+      type: "input",
+      message: "Enter your manager's ID number:",
+      validate: answer => {
+        if (!isNaN(answer)) {
+          return true;
+        } else {
+          throw Error("Please enter a number.");
+        }
+
+      }
+    },
+    {
+      name: "email",
+      type: "input",
+      message: "Enter your manager's email address:",
+      validate: answer => {
+        if (
+          /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(answer) &&
+          answer !== " "
+        ) {
+          return true;
+        }
+        return Error("Please enter a valid email address!");
+      }
+    },
+    {
+      name: "officeNumber",
+      type: "input",
+      message: "Enter your manager's office number:",
+      validate: answer => {
+        if (!isNaN(answer)) {
+          return true;
+        } else {
+          throw Error("Please enter a number.");
+        }
+      }
+    }
+  ]);
+  ids.push(manager.id);
+  return new Manager(
+    manager.name,
+    manager.id,
+    manager.email,
+    manager.officeNumber
+  );
 }
 
-async function addEmployee() {
-  try {
+async function promptUser() {
+  const ids = [];
+  const team = [];
+  const manager = await getManager(ids);
+
+  await addEmployees(team, ids);
+  team.unshift(manager);
+  const employeeCards = team.map(employee => generateCard(employee));
+
+  const fullHtml = [
+    getHeader(), 
+    ...employeeCards, 
+    getFooter()
+  ].join('');
+
+  await writeFileAsync("./output/team.html", fullHtml, function (err) {
+    if (err) {
+      console.error(err);
+    }
+  });
+}
+
+async function addEmployees(team, ids) {
+  let continueAddingEmployees = true;
+  do {
     const newEmployee = await inquirer.prompt([
       {
-        name: "addNew",
+        name: "add",
         type: "list",
         message: "Which type of team member would you like to add",
         choices: ["Engineer", "Intern", "I am finished adding team members."]
       }
     ]);
     if (newEmployee.add === "Engineer") {
-      addEngineer();
+      team.unshift(await addEngineer(ids));
     } else if (newEmployee.add === "Intern") {
-      addIntern();
+      team.push(await addIntern(ids));
     } else {
-      return console.log("Team is complete!");
-      finishHtml();
-      // const managers = team.filter(employee => employee.officeNumber === true);
-      // console.log(managers);
+      console.log("Team is complete!");
+      continueAddingEmployees = false;
     }
-  } catch (error) {
-    console.log(error);
-  }
+  } while (continueAddingEmployees);
 }
 
-async function addEngineer() {
-  try {
-    const newEngineer = await inquirer.prompt([
-      {
-        name: "name",
-        type: "input",
-        message: "Enter your engineer's name:"
-      },
-      {
-        name: "id",
-        type: "input",
-        message: "Enter your engineer's ID number:"
-      },
-      {
-        name: "email",
-        type: "input",
-        message: "Enter your engineer's email address:"
-      },
-      {
-        name: "github",
-        type: "input",
-        message: "Enter your engineer's GitHub username:"
+async function addEngineer(ids) {
+  const newEngineer = await inquirer.prompt([
+    {
+      name: "name",
+      type: "input",
+      message: "Enter your engineer's name:",
+      validate: answer => {
+        if (isNaN(answer) && answer !== " ") {
+          return true;
+        } else {
+          throw Error("Please enter your engineer's name.");
+        }
       }
-    ]);
-    console.log(newEngineer);
-    team.push(
-      new Engineer(engineer.name, engineer.id, engineer.email, engineer.github)
-    );
-    generateCard(
-      new Engineer(engineer.name, engineer.id, engineer.email, engineer.github)
-    );
-  } catch (error) {
-    console.log("try again");
-  }
-  addEmployee();
-}
-
-async function addIntern() {
-  try {
-    const newIntern = await inquirer.prompt([
-      {
-        name: "name",
-        type: "input",
-        message: "Enter your intern's name:"
-      },
-      {
-        name: "id",
-        type: "input",
-        message: "Enter your intern's ID number:"
-      },
-      {
-        name: "email",
-        type: "input",
-        message: "Enter your intern's email address:"
-      },
-      {
-        name: "school",
-        type: "input",
-        message: "Enter your intern's school name:"
+    },
+    {
+      name: "id",
+      type: "input",
+      message: "Enter your engineer's ID number:",
+      validate: answer => {
+        if (isNaN(answer)) {
+          throw Error("Please enter a number.");
+        }
+        if (ids.includes(answer)) {
+          throw Error("Please enter a new id.")
+        }
+        return true;
       }
-    ]);
-    // console.log(newIntern);
-    team.push(new Intern(intern.name, intern.id, intern.email, intern.school));
-    generateCard(
-      new Intern(intern.name, intern.id, intern.email, intern.school)
-    );
-  } catch (error) {
-    console.log("try again");
-  }
-  addEmployee();
+    },
+    {
+      name: "email",
+      type: "input",
+      message: "Enter your engineer's email address:",
+      validate: answer => {
+        if (
+          /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(answer) &&
+          answer !== " "
+        ) {
+          return true;
+        }
+        return Error("Please enter a valid email address!");
+      }
+    },
+    {
+      name: "github",
+      type: "input",
+      message: "Enter your engineer's GitHub username:",
+      validate: answer => {
+        if (isNaN(answer) && answer !== " ") {
+          return true;
+        } else {
+          throw Error("Please enter your engineer's GitHub username.");
+        }
+      }
+    }
+  ]);
+  ids.push(newEngineer.id);
+  return new Engineer(newEngineer.name, newEngineer.id, newEngineer.email, newEngineer.github);
 }
 
-const generateHtml = () => {
-  const header = `<!DOCTYPE html>
+async function addIntern(ids) {
+  const newIntern = await inquirer.prompt([
+    {
+      name: "name",
+      type: "input",
+      message: "Enter your intern's name:",
+      validate: answer => {
+        if (isNaN(answer) && answer !== " ") {
+          return true;
+        } else {
+          throw Error("Please enter your intern's name.");
+        }
+      }
+    },
+    {
+      name: "id",
+      type: "input",
+      message: "Enter your intern's ID number:",
+      validate: answer => {
+        if (isNaN(answer)) {
+          throw Error("Please enter a number.");
+        }
+        if (ids.includes(answer)) {
+          throw Error("Please enter a new id.")
+        }
+        return true;
+      }
+    },
+    {
+      name: "email",
+      type: "input",
+      message: "Enter your intern's email address:",
+      validate: answer => {
+        if (
+          /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(answer) &&
+          answer !== " "
+        ) {
+          return true;
+        }
+        return Error("Please enter a valid email address!");
+      }
+    },
+    {
+      name: "school",
+      type: "input",
+      message: "Enter your intern's school name:",
+      validate: answer => {
+        if (isNaN(answer) && answer !== " ") {
+          return true;
+        } else {
+          throw Error("Please enter your intern's school name.");
+        }
+      }
+    }
+  ]);
+  ids.push(newIntern.id);
+  return new Intern(newIntern.name, newIntern.id, newIntern.email, newIntern.school);
+}
+
+const getHeader = () => `<!DOCTYPE html>
   <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -176,96 +250,85 @@ const generateHtml = () => {
   </head>
   <body>
     <div>
-      <nav class="navbar navbar-dark bg-dark">
+      <nav class="navbar navbar-dark bg-dark" style="padding:10px;">
         <h1 class="navbar-text text-white mx-auto">My Team</h1>
       </nav>
-      <div class="container">
+      <br>
+      <div class="container" style="margin:10px;">
           <div class="row">`;
-  fs.writeFile("./output/team.html", header, function(err) {
-    if (err) {
-      console.error(err);
-    }
-  });
-};
 
-function generateCard(card) {
-  const name = card.getName();
-  const role = card.getRole();
-  const id = card.getId();
-  const email = card.getEmail();
-  let cardContent = "";
-  return new Promise((resolve, reject) => {
-    if (role === "Intern") {
-      const school = card.getSchool();
-      cardContent = `
-                <div class="col-md">
-                <div id="intern" class="card border-warning mb-3" style="width: 18rem;">
-                  <div class="card-header bg-warning text-white">
-                    ${name}
-                    <div>Intern <i class="fas fa-chess-pawn"></i></div>
-                  </div>
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item">ID: ${id}</li>
-                    <li class="list-group-item">Email: ${email}</li>
-                    <li class="list-group-item">School: ${school}</li>
-                  </ul>
-                </div>
-              </div>
-              `;
-    } else if (role === "Engineer") {
-      const github = card.getGithub();
-      cardContent = `
-              <div class="col-md">
-                <div id="engineer" class="card border-success mb-3" style="width: 18rem;">
-                  <div class="card-header bg-success text-white">
-                    ${name}
-                    <div>Engineer <i class="fas fa-laptop-code"></i></div>
-                  </div>
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item">ID: ${id}</li>
-                    <li class="list-group-item">Email: ${email}</li>
-                    <li class="list-group-item">GitHub: ${github}</li>
-                  </ul>
-                </div>
-              </div>
-              `;
-    } else {
-      const officeNumber = card.getOfficeNumber();
-      cardContent = `
-              <div class="col-md">
-              <div id="manager" class="card border-info mb-3" style="width: 18rem;">
-                <div class="card-header bg-info text-white">
-                  ${name}
-                  <div>Manager <i class="fas fa-crown"></i></div>
-                </div>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">ID: ${id}</li>
-                  <li class="list-group-item">Email: ${email}</li>
-                  <li class="list-group-item">Office Number: ${officeNumber}</li>
-                </ul>
-              </div>
-            </div>
-            <div class="row">
-              `;
-    }
-    fs.appendFile("./output/team.html,", cardContent, function(err) {
-      if (err) {
-        return reject(err);
-      }
-      return resolve();
-    });
+function generateCard(employee) {
+  const name = employee.getName();
+  const role = employee.getRole();
+  const id = employee.getId();
+  const email = employee.getEmail();
+  let iconClass = "";
+  let lastItemLabel = "";
+  let lastItem = "";
+  let color = "";
+
+  if (role === "Intern") {
+    iconClass = "fas fa-chess-pawn";
+    lastItemLabel = "School";
+    lastItem = employee.getSchool();
+    color = "warning";
+  } else if (role === "Engineer") {
+    iconClass = "fas fa-laptop-code";
+    lastItemLabel = "GitHub";
+    lastItem = employee.getGithub();
+    color = "danger";
+  } else {
+    iconClass = "fas fa-crown";
+    lastItemLabel = "Office Number";
+    lastItem = employee.getOfficeNumber();
+    color = "info";
+  }
+
+  return getCardMarkup({
+    color: color,
+    name: name,
+    role: role,
+    iconClass: iconClass,
+    id: id,
+    email: email,
+    lastItemLabel: lastItemLabel,
+    lastItem: lastItem
   });
 }
-const finishHtml = () => {
-  const htmlFooter = `
+
+function getCardMarkup(properties) {
+  const {
+    color,
+    name,
+    role,
+    iconClass,
+    id,
+    email,
+    lastItemLabel,
+    lastItem
+  } = properties;
+  return `
+  <div class="col-md">
+  <div class="card border-${color} mb-3" style="width: 18rem;">
+    <div class="card-header bg-${color} mb-3 text-white">
+      ${name}
+      <div>${role} <i class="${iconClass}"></i></div>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">ID: ${id}</li>
+      <li class="list-group-item">Email: ${email}</li>
+      <li class="list-group-item">${lastItemLabel}: ${lastItem}</li>
+    </ul>
+  </div>
+</div>
+`;
+}
+
+const getFooter = () =>
+  `
           </div>
       </div>  
   </body>
 </html>`;
-  fs.appendFile("./output/team.html", htmlFooter, function(err) {
-    if (err) {
-      console.error(err);
-    }
-  });
-};
-init();
+
+promptUser();
