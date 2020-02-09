@@ -38,7 +38,7 @@ Link to application demo video video: https://drive.google.com/file/d/1T852MHkFm
 
 
 # Credits
-The unit tests were provided by my course instructor and I consulted my course GitLab repository, Bootstrap 4 (https://getbootstrap.com/), Stack Overflow (www.stackoverflow.com), W3Schools (https://www.w3schools.com/js/js_array_methods.asp), MDN Web Docs (https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object-oriented_JS), and Poka-TechBlog (https://medium.com/poka-techblog/simplify-your-javascript-use-map-reduce-and-filter-bd02c593cc2d) in creating my project. 
+The unit tests were provided in my course materials and I consulted my course GitLab repository, Bootstrap 4 (https://getbootstrap.com/), Stack Overflow (www.stackoverflow.com), W3Schools (https://www.w3schools.com/js/js_array_methods.asp), MDN Web Docs (https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object-oriented_JS), and Poka-TechBlog (https://medium.com/poka-techblog/simplify-your-javascript-use-map-reduce-and-filter-bd02c593cc2d) in creating my project. 
 
 ## License
 MIT License
