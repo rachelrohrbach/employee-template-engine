@@ -43,7 +43,7 @@ The unit tests were provided by my course instructor and I consulted my course G
 ## License
 MIT License
 
-Copyright (c) [2019] [Rachel Rohrbach]
+Copyright (c) [2020] [Rachel Rohrbach]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
