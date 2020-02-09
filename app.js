@@ -254,7 +254,7 @@ const getHeader = () => `<!DOCTYPE html>
         <h1 class="navbar-text text-white mx-auto">My Team</h1>
       </nav>
       <br>
-      <div class="container" style="margin:10px;">
+      <div class="container mx-auto" style="margin:10px;">
           <div class="row">`;
 
 function generateCard(employee) {
@@ -308,7 +308,7 @@ function getCardMarkup(properties) {
     lastItem
   } = properties;
   return `
-  <div class="col-md">
+  <div class="card mx-auto" style="margin:5px;">
   <div class="card border-${color} mb-3" style="width: 18rem;">
     <div class="card-header bg-${color} mb-3 text-white">
       ${name}
