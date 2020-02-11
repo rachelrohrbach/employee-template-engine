@@ -44,7 +44,7 @@ async function getManager(ids) {
       message: "Enter your manager's email address:",
       validate: answer => {
         if (
-          /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(answer) &&
+          /^\S+@\S+\.(com|net|gov)/.test(answer) &&
           answer !== " "
         ) {
           return true;
@@ -152,7 +152,7 @@ async function addEngineer(ids) {
       message: "Enter your engineer's email address:",
       validate: answer => {
         if (
-          /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(answer) &&
+          /^\S+@\S+\.(com|net|gov)/.test(answer) &&
           answer !== " "
         ) {
           return true;
@@ -211,7 +211,7 @@ async function addIntern(ids) {
       message: "Enter your intern's email address:",
       validate: answer => {
         if (
-          /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(answer) &&
+          /^\S+@\S+\.(com|net|gov)/.test(answer) &&
           answer !== " "
         ) {
           return true;
